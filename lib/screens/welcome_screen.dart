@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ls_app_firebase_login/screens/requiredInfo_screen.dart';
 import 'login_screen.dart';
-import 'registration_screen.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
-//ANIMATIONS
-//two hero widgets
-//a shared property
-//navigator based screen transition
-//CUSTOM ANIMATIONS
-//a ticker - clock that allows animation to change over time
-//an animation controller - how long etc
-//animation value - does the actual animating
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome_screen';

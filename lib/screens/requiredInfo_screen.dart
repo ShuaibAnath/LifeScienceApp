@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ls_app_firebase_login/constants.dart';
-
+import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
@@ -94,11 +94,11 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
     });
   }
 
-  void _filterSchools(value) {
-    //brings up relevant schools depending on user search
-    filteredSchoolsList = schoolList.where(
-        (school) => school['Institution_Name'] == 'SIPHO CAMAGU HIGH SCHOOL');
-  }
+  // void _filterSchools(value) {
+  //   //brings up relevant schools depending on user search
+  //   filteredSchoolsList = schoolList.where(
+  //       (school) => school['Institution_Name'] == 'SIPHO CAMAGU HIGH SCHOOL');
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -259,6 +259,13 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                 ),
               ),
             ), //surname
+            RoundedButton(
+              colour: Color(0xFFE9C46A),
+              title: 'Proceed',
+              onPressed: () {
+                //proceed button
+              },
+            ),
           ],
         ),
       ),
