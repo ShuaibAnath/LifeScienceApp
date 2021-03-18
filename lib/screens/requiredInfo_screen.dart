@@ -18,6 +18,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
   List<DropdownMenuItem<String>> _dropdownMenuItems;
   String _selectedProvince, abbreviatedProvince;
   List schoolList;
+  List filteredSchoolsList = [];
   Map<String, dynamic> schoolMap;
   List<String> _provinces = [
     'Eastern Cape',
@@ -86,18 +87,25 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
     setState(() {
       _selectedProvince = selectedProvince;
       abbreviatedProvince = provinceMap[_selectedProvince];
-      schoolList = schoolMap[abbreviatedProvince]['Institution_Name'];
+      filteredSchoolsList =
+          schoolList = schoolMap[abbreviatedProvince]['Institution_Name'];
       print(schoolList.length);
       print(abbreviatedProvince);
     });
   }
 
+  void _filterSchools(value) {
+    //brings up relevant schools depending on user search
+    filteredSchoolsList = schoolList.where(
+        (school) => school['Institution_Name'] == 'SIPHO CAMAGU HIGH SCHOOL');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.greenAccent,
+      backgroundColor: Color(0xFF264653),
       appBar: AppBar(
-        backgroundColor: Colors.green,
+        backgroundColor: Color(0xFFE76F51),
         title: Text('STUDENT DETAILS'),
       ),
       body: SafeArea(
@@ -106,10 +114,10 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 20.0),
+              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 15.0),
               child: Text(
                 'PLEASE PROVIDE THE FOLLOWING : ',
-                style: TextStyle(fontSize: 18.0),
+                style: TextStyle(fontSize: 18.0, color: Colors.white),
               ),
             ),
             Padding(
@@ -122,13 +130,15 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                     Expanded(
                       child: Text(
                         'Select your province: ',
-                        style: TextStyle(fontSize: 15.0),
+                        style: TextStyle(fontSize: 15.0, color: Colors.white),
                       ),
                     ),
                     Expanded(
                       child: DropdownButton(
+                        dropdownColor: Color(0xFFE76F51),
+                        iconEnabledColor: Color(0xFFE76F51),
                         items: _dropdownMenuItems,
-                        style: TextStyle(fontSize: 15.0, color: Colors.black),
+                        style: TextStyle(fontSize: 15.0, color: Colors.white),
                         value: _selectedProvince,
                         onChanged: OnChangedDropdownItem,
                       ),
@@ -146,13 +156,14 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Select your school: ', style: TextStyle(fontSize: 15.0),
+                        'Select your school: ',
+                        style: TextStyle(fontSize: 15.0, color: Colors.white),
                       ),
                     ),
                     Expanded(
                       child: Text(
                         'School dropdownMenu',
-                        style: TextStyle(fontSize: 15.0),
+                        style: TextStyle(fontSize: 15.0, color: Colors.white),
                       ),
                     ),
                   ], // Row widgets
@@ -164,10 +175,10 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
               child: RichText(
                 text: TextSpan(
                     text: 'Required',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                     children: [
                       TextSpan(
-                          text: ' *',
+                          text: '*',
                           style: TextStyle(
                             color: Colors.red,
                           ))
@@ -175,12 +186,17 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
               ),
             ),
             TextField(
+              style: TextStyle(color: Colors.white),
               textAlign: TextAlign.center,
               onChanged: (value) {
                 name = value;
                 //Do something with the user input.
               },
-              decoration: kTextfieldDecoration.copyWith(hintText: 'NAME'),
+              decoration: kTextfieldDecoration.copyWith(
+                hintText: 'YOUR NAME',
+                fillColor: Colors.white,
+                filled: true,
+              ),
             ), //name
 
             Padding(
@@ -188,10 +204,10 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
               child: RichText(
                 text: TextSpan(
                     text: 'Required',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                     children: [
                       TextSpan(
-                          text: ' *',
+                          text: '*',
                           style: TextStyle(
                             color: Colors.red,
                           ))
@@ -200,22 +216,27 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
             ),
 
             TextField(
+              style: TextStyle(color: Colors.white),
               textAlign: TextAlign.center,
               onChanged: (value) {
                 surname = value;
                 //Do something with the user input.
               },
-              decoration: kTextfieldDecoration.copyWith(hintText: 'SURNAME'),
+              decoration: kTextfieldDecoration.copyWith(
+                hintText: 'YOUR SURNAME',
+                fillColor: Colors.white,
+                filled: true,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
               child: RichText(
                 text: TextSpan(
                     text: 'Optional',
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                     children: [
                       TextSpan(
-                          text: ' *',
+                          text: '*',
                           style: TextStyle(
                             color: Colors.blue,
                           ))
@@ -225,13 +246,17 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
               child: TextField(
+                style: TextStyle(color: Colors.white),
                 textAlign: TextAlign.center,
                 onChanged: (value) {
                   cellNum = value;
                   //Do something with the user input.
                 },
-                decoration:
-                    kTextfieldDecoration.copyWith(hintText: 'CELLPHONE NUMBER'),
+                decoration: kTextfieldDecoration.copyWith(
+                  hintText: 'YOUR CELLPHONE NUMBER',
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
               ),
             ), //surname
           ],

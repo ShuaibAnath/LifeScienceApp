@@ -21,11 +21,10 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Color(0xFF264653),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
@@ -45,7 +44,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
             ),
 
             RoundedButton(
-              colour: Colors.lightBlue,
+              colour: Color(0xFFE9C46A),
               title: 'Log In',
               onPressed: () {
                 Navigator.push(
@@ -55,7 +54,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               },
             ), //onPressed - Go to login screen.
             RoundedButton(
-              colour: Colors.lightBlue,
+              colour: Color(0xFFE9C46A),
               title: 'Register',
               onPressed: () {
                 Navigator.push(
