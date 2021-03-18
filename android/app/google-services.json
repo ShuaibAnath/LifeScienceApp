@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1009244618267",
+    "project_id": "ls-app-login-af2f0",
+    "storage_bucket": "ls-app-login-af2f0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1009244618267:android:ff7479f81b9733bddd02be",
+        "android_client_info": {
+          "package_name": "com.impulseedu.ls_app_firebase_login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1009244618267-1jg9onmp1kb54nh092g9j294hlmpn5qu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.impulseedu.ls_app_firebase_login",
+            "certificate_hash": "4019e37ff30954d59d78559c9bbac3d045ffbef3"
+          }
+        },
+        {
+          "client_id": "1009244618267-l2b98hg4qq4n4n9ppvrsmm7kflb7kjo4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAggkoELikIFpAuM_EXr_zNBhVKPc6GHc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1009244618267-l2b98hg4qq4n4n9ppvrsmm7kflb7kjo4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
