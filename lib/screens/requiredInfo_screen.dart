@@ -146,8 +146,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        'Select your school: ',
-                        style: TextStyle(fontSize: 15.0),
+                        'Select your school: ', style: TextStyle(fontSize: 15.0),
                       ),
                     ),
                     Expanded(
