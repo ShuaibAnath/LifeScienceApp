@@ -278,7 +278,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
         style: TextStyle(color: Colors.white),
       ),
       searchHint: Text(
-        'Search schools',
+        'Search Schools',
         style: TextStyle(fontSize: 20),
       ),
       onChanged: (value) {
