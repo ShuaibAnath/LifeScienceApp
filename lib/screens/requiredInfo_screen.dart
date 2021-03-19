@@ -1,3 +1,4 @@
+import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:ls_app_firebase_login/constants.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
@@ -5,6 +6,8 @@ import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'package:flutter/services.dart';
+// import 'package:dropdown_search/dropdown_search.dart';
+import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class RequiredInfoScreen extends StatefulWidget {
   static const String id = 'requiredInfo_screen';
@@ -14,11 +17,17 @@ class RequiredInfoScreen extends StatefulWidget {
 }
 
 class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
+  //Map<String, String> selectedValueMap = Map();
+  GlobalKey<AutoCompleteTextFieldState<String>> key = new GlobalKey();
+  String selectedSchool = '';
   String name, surname, schoolName, province, cellNum;
   List<DropdownMenuItem<String>> _dropdownMenuItems;
+  bool tapped = false;
   String _selectedProvince, abbreviatedProvince;
-  List schoolList;
-  List filteredSchoolsList = [];
+  List schoolList = [];
+  Color myColor = Color(0x77FFFFFF);
+  List<DropdownMenuItem> schoolItems = [];
+
   Map<String, dynamic> schoolMap;
   List<String> _provinces = [
     'Eastern Cape',
@@ -43,6 +52,8 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
     'Western Cape': 'WC'
   };
 
+  TextEditingController myController = TextEditingController();
+
   @override
   void initState() {
     _dropdownMenuItems = buildDropdownMenuItems(_provinces);
@@ -50,26 +61,23 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
     abbreviatedProvince = 'EC';
     parseJsonFromAssets('school/schools.json').then((data) {
       schoolMap = data;
-      print(data['EC']);
-    });
 
+      setState(() {
+        abbreviatedProvince = provinceMap[_selectedProvince];
+        schoolList = schoolMap[abbreviatedProvince]['Institution_Name'];
+        for (String school in schoolList) {
+          schoolItems.add(DropdownMenuItem(child: Text(school)));
+        } // add items to schoolItems
+      });
+    });
     super.initState();
   }
 
-  Future<String> loadJsonData() async {
-    var jsonTextData = await rootBundle.loadString('school/schools.json');
-    print(jsonTextData.runtimeType);
-
-    return jsonTextData;
-  }
-  // jsonDecode(jsonTextData)
-
   Future<Map<String, dynamic>> parseJsonFromAssets(String assetsPath) async {
-    print('--- Parse json from: $assetsPath');
     return rootBundle
         .loadString(assetsPath)
         .then((jsonStr) => jsonDecode(jsonStr));
-  }
+  } // function to get data from the json
 
   List<DropdownMenuItem<String>> buildDropdownMenuItems(List provinces) {
     List<DropdownMenuItem<String>> items = [];
@@ -85,20 +93,15 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
   // ignore: non_constant_identifier_names
   OnChangedDropdownItem(String selectedProvince) {
     setState(() {
+      schoolItems = [];
       _selectedProvince = selectedProvince;
       abbreviatedProvince = provinceMap[_selectedProvince];
-      filteredSchoolsList =
-          schoolList = schoolMap[abbreviatedProvince]['Institution_Name'];
-      print(schoolList.length);
-      print(abbreviatedProvince);
+      schoolList = schoolMap[abbreviatedProvince]['Institution_Name'];
+      for (String school in schoolList) {
+        schoolItems.add(DropdownMenuItem(child: Text(school)));
+      } // add items to schoolItems
     });
   }
-
-  // void _filterSchools(value) {
-  //   //brings up relevant schools depending on user search
-  //   filteredSchoolsList = schoolList.where(
-  //       (school) => school['Institution_Name'] == 'SIPHO CAMAGU HIGH SCHOOL');
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -137,6 +140,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                       child: DropdownButton(
                         dropdownColor: Color(0xFFE76F51),
                         iconEnabledColor: Color(0xFFE76F51),
+                        iconDisabledColor: Color(0xFFE76F51),
                         items: _dropdownMenuItems,
                         style: TextStyle(fontSize: 15.0, color: Colors.white),
                         value: _selectedProvince,
@@ -147,29 +151,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 30.0),
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Select your school: ',
-                        style: TextStyle(fontSize: 15.0, color: Colors.white),
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        'School dropdownMenu',
-                        style: TextStyle(fontSize: 15.0, color: Colors.white),
-                      ),
-                    ),
-                  ], // Row widgets
-                ),
-              ),
-            ),
+            getSearchableDropdown(schoolList),
             Padding(
               padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
               child: RichText(
@@ -261,7 +243,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
             ), //surname
             RoundedButton(
               colour: Color(0xFFE9C46A),
-              title: 'Proceed',
+              title: 'PROCEED',
               onPressed: () {
                 //proceed button
               },
@@ -271,6 +253,40 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
       ),
     );
   }
-}
 
-//EC.Institution_Name
+  //function to generate dropDownSearch
+  Widget getSearchableDropdown(List listData) {
+    List<DropdownMenuItem> items = [];
+    for (int i = 0; i < listData.length; i++) {
+      items.add(DropdownMenuItem(
+        child: Text(
+          listData[i],
+          style: TextStyle(color: Colors.white),
+        ),
+        value: listData[i],
+      ));
+    }
+    return SearchableDropdown(
+      menuBackgroundColor: Color(0xFFF4A261),
+      iconEnabledColor: Color(0xFFE76F51),
+      iconDisabledColor: Color(0xFFE76F51),
+      isExpanded: true,
+      items: items,
+      isCaseSensitiveSearch: false,
+      hint: Text(
+        'Select your school',
+        style: TextStyle(color: Colors.white),
+      ),
+      searchHint: Text(
+        'Search schools',
+        style: TextStyle(fontSize: 20),
+      ),
+      onChanged: (value) {
+        setState(() {
+          schoolName = value;
+          print(schoolName);
+        });
+      },
+    );
+  }
+}
