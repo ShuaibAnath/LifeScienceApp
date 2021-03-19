@@ -145,44 +145,52 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
         title: Text('STUDENT DETAILS'),
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
-              child: Center(
-                child: Flexible(
-                  flex: 1,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+                child: Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Expanded(
-                        child: Text(
-                          'Select your province : ',
-                          style: TextStyle(fontSize: 15.0, color: Colors.white),
-                        ),
+                      Text(
+                        'Select your province : ',
+                        style: TextStyle(fontSize: 15.0, color: Colors.white),
                       ),
-                      Expanded(
-                        child: DropdownButton(
-                          dropdownColor: Color(0xFFE76F51),
-                          iconEnabledColor: Color(0xFFE76F51),
-                          iconDisabledColor: Color(0xFFE76F51),
-                          items: _dropdownMenuItems,
-                          style: TextStyle(fontSize: 15.0, color: Colors.white),
-                          value: _selectedProvince,
-                          onChanged: OnChangedDropdownItem,
-                        ),
+                      DropdownButton(
+                        dropdownColor: Color(0xFFE76F51),
+                        iconEnabledColor: Color(0xFFE76F51),
+                        iconDisabledColor: Color(0xFFE76F51),
+                        items: _dropdownMenuItems,
+                        style: TextStyle(fontSize: 15.0, color: Colors.white),
+                        value: _selectedProvince,
+                        onChanged: OnChangedDropdownItem,
                       ),
                     ], // Row widgets
                   ),
                 ),
               ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Padding(
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+                child: RichText(
+                  text: TextSpan(
+                      text: 'Required',
+                      style: TextStyle(color: Colors.white),
+                      children: [
+                        TextSpan(
+                            text: '*',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ))
+                      ]),
+                ),
+              ),
+              getSearchableDropdown(schoolList),
+              Padding(
                 padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
                 child: RichText(
                   text: TextSpan(
@@ -197,29 +205,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                       ]),
                 ),
               ),
-            ),
-            Flexible(flex: 2, child: getSearchableDropdown(schoolList)),
-            Flexible(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-                child: RichText(
-                  text: TextSpan(
-                      text: 'Required',
-                      style: TextStyle(color: Colors.white),
-                      children: [
-                        TextSpan(
-                            text: '*',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ))
-                      ]),
-                ),
-              ),
-            ),
-            Flexible(
-              flex: 2,
-              child: TextField(
+              TextField(
                 style: TextStyle(color: Colors.black),
                 textAlign: TextAlign.center,
                 onChanged: (value) {
@@ -231,12 +217,9 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                   fillColor: Colors.white,
                   filled: true,
                 ),
-              ),
-            ), //name
+              ), //name
 
-            Flexible(
-              flex: 1,
-              child: Padding(
+              Padding(
                 padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
                 child: RichText(
                   text: TextSpan(
@@ -251,11 +234,8 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                       ]),
                 ),
               ),
-            ),
 
-            Flexible(
-              flex: 2,
-              child: TextFormField(
+              TextFormField(
                 style: TextStyle(color: Colors.black),
                 textAlign: TextAlign.center,
                 onChanged: (value) {
@@ -268,10 +248,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                   filled: true,
                 ),
               ),
-            ),
-            Flexible(
-              flex: 1,
-              child: Padding(
+              Padding(
                 padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
                 child: RichText(
                   text: TextSpan(
@@ -286,10 +263,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                       ]),
                 ),
               ),
-            ),
-            Flexible(
-              flex: 2,
-              child: Padding(
+              Padding(
                 padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
                 child: TextField(
                   keyboardType: TextInputType.number,
@@ -305,11 +279,8 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                     filled: true,
                   ),
                 ),
-              ),
-            ), //surname
-            Flexible(
-              flex: 2,
-              child: RoundedButton(
+              ), //surname
+              RoundedButton(
                 colour: Color(0xFFE9C46A),
                 title: 'PROCEED',
                 onPressed: () {
@@ -321,18 +292,23 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                       (schoolName.isEmpty)) {
                     print('FOUND NULLS');
                     _showMyDialog();
+                  }
+                  if (cellNum.isEmpty || (cellNum == null)) {
+                    cellNum = '0000000000';
+                    print(cellNum);
                   } else {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) => RegistrationScreen()),
                     );
-                  } // if else
+                  }
+                  // if else
                   //proceed button actions onPressed
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
