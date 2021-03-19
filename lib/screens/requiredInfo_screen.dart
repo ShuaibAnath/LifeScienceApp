@@ -6,6 +6,7 @@ import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:ls_app_firebase_login/screens/registration_screen.dart';
 // import 'package:dropdown_search/dropdown_search.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
@@ -20,7 +21,11 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
   //Map<String, String> selectedValueMap = Map();
   GlobalKey<AutoCompleteTextFieldState<String>> key = new GlobalKey();
   String selectedSchool = '';
-  String name, surname, schoolName, province, cellNum;
+  String name = '';
+  String surname = '';
+  String schoolName = '';
+  String province = '';
+  String cellNum = '';
   List<DropdownMenuItem<String>> _dropdownMenuItems;
   bool tapped = false;
   String _selectedProvince, abbreviatedProvince;
@@ -103,6 +108,34 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
     });
   }
 
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Incomplete details'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    'Please make sure you have selected your school and entered your name and surname'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -117,136 +150,187 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 15.0),
-              child: Text(
-                'PLEASE PROVIDE THE FOLLOWING : ',
-                style: TextStyle(fontSize: 18.0, color: Colors.white),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 30.0),
+              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
               child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Select your province: ',
-                        style: TextStyle(fontSize: 15.0, color: Colors.white),
+                child: Flexible(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Select your province : ',
+                          style: TextStyle(fontSize: 15.0, color: Colors.white),
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: DropdownButton(
-                        dropdownColor: Color(0xFFE76F51),
-                        iconEnabledColor: Color(0xFFE76F51),
-                        iconDisabledColor: Color(0xFFE76F51),
-                        items: _dropdownMenuItems,
-                        style: TextStyle(fontSize: 15.0, color: Colors.white),
-                        value: _selectedProvince,
-                        onChanged: OnChangedDropdownItem,
+                      Expanded(
+                        child: DropdownButton(
+                          dropdownColor: Color(0xFFE76F51),
+                          iconEnabledColor: Color(0xFFE76F51),
+                          iconDisabledColor: Color(0xFFE76F51),
+                          items: _dropdownMenuItems,
+                          style: TextStyle(fontSize: 15.0, color: Colors.white),
+                          value: _selectedProvince,
+                          onChanged: OnChangedDropdownItem,
+                        ),
                       ),
-                    ),
-                  ], // Row widgets
+                    ], // Row widgets
+                  ),
                 ),
               ),
             ),
-            getSearchableDropdown(schoolList),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-              child: RichText(
-                text: TextSpan(
-                    text: 'Required',
-                    style: TextStyle(color: Colors.white),
-                    children: [
-                      TextSpan(
-                          text: '*',
-                          style: TextStyle(
-                            color: Colors.red,
-                          ))
-                    ]),
+            Flexible(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
+                child: RichText(
+                  text: TextSpan(
+                      text: 'Required',
+                      style: TextStyle(color: Colors.white),
+                      children: [
+                        TextSpan(
+                            text: '*',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ))
+                      ]),
+                ),
               ),
             ),
-            TextField(
-              style: TextStyle(color: Colors.white),
-              textAlign: TextAlign.center,
-              onChanged: (value) {
-                name = value;
-                //Do something with the user input.
-              },
-              decoration: kTextfieldDecoration.copyWith(
-                hintText: 'YOUR NAME',
-                fillColor: Colors.white,
-                filled: true,
-              ),
-            ), //name
-
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-              child: RichText(
-                text: TextSpan(
-                    text: 'Required',
-                    style: TextStyle(color: Colors.white),
-                    children: [
-                      TextSpan(
-                          text: '*',
-                          style: TextStyle(
-                            color: Colors.red,
-                          ))
-                    ]),
+            Flexible(flex: 2, child: getSearchableDropdown(schoolList)),
+            Flexible(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
+                child: RichText(
+                  text: TextSpan(
+                      text: 'Required',
+                      style: TextStyle(color: Colors.white),
+                      children: [
+                        TextSpan(
+                            text: '*',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ))
+                      ]),
+                ),
               ),
             ),
-
-            TextField(
-              style: TextStyle(color: Colors.white),
-              textAlign: TextAlign.center,
-              onChanged: (value) {
-                surname = value;
-                //Do something with the user input.
-              },
-              decoration: kTextfieldDecoration.copyWith(
-                hintText: 'YOUR SURNAME',
-                fillColor: Colors.white,
-                filled: true,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
-              child: RichText(
-                text: TextSpan(
-                    text: 'Optional',
-                    style: TextStyle(color: Colors.white),
-                    children: [
-                      TextSpan(
-                          text: '*',
-                          style: TextStyle(
-                            color: Colors.blue,
-                          ))
-                    ]),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+            Flexible(
+              flex: 2,
               child: TextField(
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: Colors.black),
                 textAlign: TextAlign.center,
                 onChanged: (value) {
-                  cellNum = value;
+                  name = value;
                   //Do something with the user input.
                 },
                 decoration: kTextfieldDecoration.copyWith(
-                  hintText: 'YOUR CELLPHONE NUMBER',
+                  hintText: 'YOUR NAME',
                   fillColor: Colors.white,
                   filled: true,
                 ),
               ),
+            ), //name
+
+            Flexible(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
+                child: RichText(
+                  text: TextSpan(
+                      text: 'Required',
+                      style: TextStyle(color: Colors.white),
+                      children: [
+                        TextSpan(
+                            text: '*',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ))
+                      ]),
+                ),
+              ),
+            ),
+
+            Flexible(
+              flex: 2,
+              child: TextFormField(
+                style: TextStyle(color: Colors.black),
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  surname = value;
+                  //Do something with the user input.
+                },
+                decoration: kTextfieldDecoration.copyWith(
+                  hintText: 'YOUR SURNAME',
+                  fillColor: Colors.white,
+                  filled: true,
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(10.0, 20.0, 10.0, 0.0),
+                child: RichText(
+                  text: TextSpan(
+                      text: 'Optional',
+                      style: TextStyle(color: Colors.white),
+                      children: [
+                        TextSpan(
+                            text: '*',
+                            style: TextStyle(
+                              color: Colors.blue,
+                            ))
+                      ]),
+                ),
+              ),
+            ),
+            Flexible(
+              flex: 2,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: Colors.black),
+                  textAlign: TextAlign.center,
+                  onChanged: (value) {
+                    cellNum = value;
+                    //Do something with the user input.
+                  },
+                  decoration: kTextfieldDecoration.copyWith(
+                    hintText: 'YOUR CELLPHONE NUMBER',
+                    fillColor: Colors.white,
+                    filled: true,
+                  ),
+                ),
+              ),
             ), //surname
-            RoundedButton(
-              colour: Color(0xFFE9C46A),
-              title: 'PROCEED',
-              onPressed: () {
-                //proceed button
-              },
+            Flexible(
+              flex: 2,
+              child: RoundedButton(
+                colour: Color(0xFFE9C46A),
+                title: 'PROCEED',
+                onPressed: () {
+                  if (name.isEmpty ||
+                      (name == null) ||
+                      (surname == null) ||
+                      (schoolName == null) ||
+                      (surname.isEmpty) ||
+                      (schoolName.isEmpty)) {
+                    print('FOUND NULLS');
+                    _showMyDialog();
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationScreen()),
+                    );
+                  } // if else
+                  //proceed button actions onPressed
+                },
+              ),
             ),
           ],
         ),
@@ -284,7 +368,6 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
       onChanged: (value) {
         setState(() {
           schoolName = value;
-          print(schoolName);
         });
       },
     );
