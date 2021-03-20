@@ -1,4 +1,3 @@
-import 'package:autocomplete_textfield/autocomplete_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:ls_app_firebase_login/constants.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
@@ -18,8 +17,6 @@ class RequiredInfoScreen extends StatefulWidget {
 }
 
 class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
-  //Map<String, String> selectedValueMap = Map();
-  GlobalKey<AutoCompleteTextFieldState<String>> key = new GlobalKey();
   String selectedSchool = '';
   String name = '';
   String surname = '';
@@ -64,6 +61,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
     _dropdownMenuItems = buildDropdownMenuItems(_provinces);
     _selectedProvince = _dropdownMenuItems[0].value;
     abbreviatedProvince = 'EC';
+    province = 'Eastern Cape';
     parseJsonFromAssets('school/schools.json').then((data) {
       schoolMap = data;
 
@@ -100,6 +98,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
     setState(() {
       schoolItems = [];
       _selectedProvince = selectedProvince;
+      province = selectedProvince;
       abbreviatedProvince = provinceMap[_selectedProvince];
       schoolList = schoolMap[abbreviatedProvince]['Institution_Name'];
       for (String school in schoolList) {
@@ -293,6 +292,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                     print('FOUND NULLS');
                     _showMyDialog();
                   }
+                  // if(province.isEmpty){province = 'Eastern Cape';}//if province not selected make it eastern cape
                   if (cellNum.isEmpty || (cellNum == null)) {
                     cellNum = '0000000000';
                     print(cellNum);
@@ -300,7 +300,14 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => RegistrationScreen()),
+                          builder: (context) => RegistrationScreen(
+                            name: name,
+                            surname: surname,
+                            schoolName: schoolName,
+                            province: province,
+                            cellNum: cellNum,
+                          )),
+
                     );
                   }
                   // if else
