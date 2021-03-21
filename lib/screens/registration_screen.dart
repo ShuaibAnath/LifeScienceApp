@@ -5,6 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ls_app_firebase_login/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:ls_app_firebase_login/compontents/google_sign_in.dart';
+import 'package:flutter_signin_button/button_view.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -64,7 +68,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.lightBlueAccent,
+      backgroundColor: Color(0xFF264653),
       body: ModalProgressHUD(
         inAsyncCall: showSpinner,
         child: Column(
@@ -126,7 +130,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     if (newUser != null) {
                       firestore.collection('users').add({
                         'email': email,
-                        'name':widget.name,
+                        'name': widget.name,
                         'surname': widget.surname,
                         'schoolName': widget.schoolName,
                         'province': widget.province,
@@ -145,6 +149,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 }
               }, //onPressed
             ),
+            SignInButton(Buttons.Google,
+                onPressed: () => Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => WelcomeScreen()))),
           ],
         ),
       ),
