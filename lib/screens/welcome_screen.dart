@@ -24,7 +24,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
     loginStateSubscription = authBloc.currentUser.listen((fbUser) {
-      if (fbUser == null) {
+      if (fbUser != null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => LoginScreen(),

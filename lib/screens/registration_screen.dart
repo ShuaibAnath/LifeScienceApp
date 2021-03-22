@@ -40,20 +40,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   final _auth = FirebaseAuth.instance;
   // create a listener for google sign in
-  @override
-  void initState() {
-    var authBloc = Provider.of<AuthBloc>(context, listen: false);
-    authBloc.currentUser.listen((fbUser) {
-      if (fbUser != null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => WelcomeScreen(),
-          ),
-        );
-      } // check if firebase user exists
-    });
-    super.initState();
-  } //initState
 
   Future<void> _showMyDialogReg(String message) async {
     return showDialog<void>(
@@ -84,7 +70,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = Provider.of<AuthBloc>(context);
     return Scaffold(
       backgroundColor: Color(0xFF264653),
       body: ModalProgressHUD(
