@@ -1,3 +1,5 @@
+import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:ls_app_firebase_login/auth_bloc.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
 import 'package:ls_app_firebase_login/constants.dart';
 import 'package:flutter/material.dart';
@@ -5,10 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ls_app_firebase_login/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:ls_app_firebase_login/compontents/google_sign_in.dart';
 import 'package:flutter_signin_button/button_view.dart';
-import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:provider/provider.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -34,9 +34,26 @@ class RegistrationScreen extends StatefulWidget {
 }
 
 class _RegistrationScreenState extends State<RegistrationScreen> {
-  String email, password;
-  final _auth = FirebaseAuth.instance;
+  String email = '';
+  String password = '';
   bool showSpinner = false;
+
+  final _auth = FirebaseAuth.instance;
+  // create a listener for google sign in
+  @override
+  void initState() {
+    var authBloc = Provider.of<AuthBloc>(context, listen: false);
+    authBloc.currentUser.listen((fbUser) {
+      if (fbUser != null) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => WelcomeScreen(),
+          ),
+        );
+      } // check if firebase user exists
+    });
+    super.initState();
+  } //initState
 
   Future<void> _showMyDialogReg(String message) async {
     return showDialog<void>(
@@ -67,6 +84,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = Provider.of<AuthBloc>(context);
     return Scaffold(
       backgroundColor: Color(0xFF264653),
       body: ModalProgressHUD(
@@ -93,11 +111,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 //Do something with the user input.
               },
               decoration: kTextfieldDecoration.copyWith(
-                  hintText: 'Enter your email ${widget.surname}'),
+                hintText: 'Enter your email',
+                fillColor: Colors.white,
+                filled: true,
+              ),
             ), //email
+
             SizedBox(
               height: 5.0,
             ),
+
             TextField(
               obscureText: true,
               textAlign: TextAlign.center,
@@ -105,8 +128,12 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 password = value; //Do something with the user input.
               },
               decoration: kTextfieldDecoration.copyWith(
-                  hintText: 'Enter a password, at least 6 characters'),
+                hintText: 'Enter a password, at least 6 characters',
+                fillColor: Colors.white,
+                filled: true,
+              ),
             ), //password
+
             RoundedButton(
               title: 'Register',
               colour: Colors.blueAccent,
@@ -146,12 +173,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         'Unable to Register.Please try again later or check your internet connection.');
                     print(e);
                   } //try-catch
-                }
+                } //else
               }, //onPressed
             ),
-            SignInButton(Buttons.Google,
-                onPressed: () => Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => WelcomeScreen()))),
           ],
         ),
       ),
