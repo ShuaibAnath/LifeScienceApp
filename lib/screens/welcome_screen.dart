@@ -1,14 +1,14 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
+import 'package:ls_app_firebase_login/screens/dummy_screen.dart';
 import 'package:ls_app_firebase_login/screens/requiredInfo_screen.dart';
 import 'package:provider/provider.dart';
 import 'login_screen.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
 import 'package:ls_app_firebase_login/auth_bloc.dart';
-import 'package:flutter_signin_button/button_view.dart';
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome_screen';
@@ -24,13 +24,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   void initState() {
     var authBloc = Provider.of<AuthBloc>(context, listen: false);
     loginStateSubscription = authBloc.currentUser.listen((fbUser) {
-      if (fbUser != null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => LoginScreen(),
-          ),
-        );
-      } // check if firebase user exists
+      // if (fbUser != null) {
+      //   Navigator.of(context).pushReplacement(
+      //     MaterialPageRoute(
+      //       builder: (context) => DummyScreen(),
+      //     ),
+      //   );
+      // } // check if firebase user exists
     });
     super.initState();
   }
@@ -84,12 +84,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 );
               },
             ),
-            SignInButton(
-              Buttons.Google,
-              elevation: 5.0,
-              text: 'Sign out with Google',
-              onPressed: () => authBloc.logout(),
-            ),
+            SignInButton(Buttons.Google,
+                elevation: 5.0, text: 'Sign out with Google', onPressed: () {
+              authBloc.logout();
+            }),
           ],
         ),
       ),

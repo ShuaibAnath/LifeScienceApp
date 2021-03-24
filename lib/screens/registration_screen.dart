@@ -1,5 +1,3 @@
-import 'package:flutter_signin_button/flutter_signin_button.dart';
-import 'package:ls_app_firebase_login/auth_bloc.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
 import 'package:ls_app_firebase_login/constants.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ls_app_firebase_login/screens/welcome_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:flutter_signin_button/button_view.dart';
-import 'package:provider/provider.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 

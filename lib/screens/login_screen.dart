@@ -1,9 +1,9 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
 import 'package:ls_app_firebase_login/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ls_app_firebase_login/screens/dummy_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
 import 'welcome_screen.dart';
@@ -22,20 +22,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
   StreamSubscription<User> loginStateSubscription;
   // create a listener for google sign in
-  @override
-  void initState() {
-    var authBloc = Provider.of<AuthBloc>(context, listen: false);
-    loginStateSubscription = authBloc.currentUser.listen((fbUser) {
-      if (fbUser != null) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (context) => WelcomeScreen(),
-          ),
-        );
-      } // check if firebase user exists
-    });
-    super.initState();
-  } //initState
+  // @override
+  // void initState() {
+  //   var authBloc = Provider.of<AuthBloc>(context, listen: false);
+  //   loginStateSubscription = authBloc.currentUser.listen((fbUser) {
+  //     if (fbUser != null) {
+  //       Navigator.of(context).pushReplacement(
+  //         MaterialPageRoute(
+  //           builder: (context) => DummyScreen(),
+  //         ),
+  //       );
+  //     } // check if firebase user exists
+  //   });
+  //   super.initState();
+  // } //initState
 
   @override
   void dispose() {
@@ -128,7 +128,9 @@ class _LoginScreenState extends State<LoginScreen> {
               SignInButton(
                 Buttons.Google,
                 elevation: 5.0,
-                onPressed: () => authBloc.loginGoogle(),
+                onPressed: () {
+                  authBloc.loginGoogle();
+                },
               ),
             ],
           ),

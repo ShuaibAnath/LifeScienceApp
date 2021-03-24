@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ls_app_firebase_login/services/auth_service.dart';
 
 class AuthBloc {
+  String userGmail = '';
   final authService = AuthService();
   final googleSignIn = GoogleSignIn(
       scopes: ['email']); //permissions your app require, there may be more
@@ -23,6 +24,7 @@ class AuthBloc {
       final result = await authService
           .signInWithCredential(credential); //call out to service
       print('${result.user.displayName}');
+      userGmail = result.user.email;
     } catch (error) {
       print(error);
     } //catch
@@ -30,6 +32,7 @@ class AuthBloc {
 
   logout() {
     authService.logout();
+    print('Logout successful');
   } //logout function
 
 } // AuthBloc class
