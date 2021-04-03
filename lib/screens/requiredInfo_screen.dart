@@ -5,12 +5,16 @@ import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import 'package:ls_app_firebase_login/screens/dummy_screen.dart';
 import 'package:ls_app_firebase_login/screens/registration_screen.dart';
 // import 'package:dropdown_search/dropdown_search.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 class RequiredInfoScreen extends StatefulWidget {
   static const String id = 'requiredInfo_screen';
+  final String userGmail;
+
+  RequiredInfoScreen({this.userGmail});
 
   @override
   _RequiredInfoScreenState createState() => _RequiredInfoScreenState();
@@ -29,6 +33,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
   List schoolList = [];
   Color myColor = Color(0x77FFFFFF);
   List<DropdownMenuItem> schoolItems = [];
+
 
   Map<String, dynamic> schoolMap;
   List<String> _provinces = [
@@ -55,6 +60,8 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
   };
 
   TextEditingController myController = TextEditingController();
+
+
 
   @override
   void initState() {
@@ -281,7 +288,7 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
               ), //surname
               RoundedButton(
                 colour: Color(0xFFE9C46A),
-                title: 'PROCEED',
+                title: (widget.userGmail == '') ? 'PROCEED':'REGISTER',
                 onPressed: () {
                   if (name.isEmpty ||
                       (name == null) ||
@@ -289,31 +296,70 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                       (schoolName == null) ||
                       (surname.isEmpty) ||
                       (schoolName.isEmpty)) {
-                    print('FOUND NULLS');
                     _showMyDialog();
-                  }
-                  // if(province.isEmpty){province = 'Eastern Cape';}//if province not selected make it eastern cape
+                  }// if Details incomplete
                   if (cellNum.isEmpty || (cellNum == null)) {
                     cellNum = '0000000000';
-                    print(cellNum);
-                  } else {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RegistrationScreen(
-                            name: name,
-                            surname: surname,
-                            schoolName: schoolName,
-                            province: province,
-                            cellNum: cellNum,
-                          )),
-
-                    );
-                  }
-                  // if else
-                  //proceed button actions onPressed
+                  }// if cellNum is empty
+                  else {
+                    if(widget.userGmail == '') {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                RegistrationScreen(
+                                  name: name,
+                                  surname: surname,
+                                  schoolName: schoolName,
+                                  province: province,
+                                  cellNum: cellNum,
+                                )),
+                      );
+                    }// if Proceed button
+                    else{
+                      firestore.collection('users').add({
+                        'email': widget.userGmail,
+                        'name': name,
+                        'surname': surname,
+                        'schoolName': schoolName,
+                        'province': province,
+                        'cellNumber': cellNum,
+                      });
+                      Navigator.pushNamed(context, DummyScreen.id);
+                    }// else register button
+                  }// else proceed button actions onPressed
                 },
               ),
+
+              // RoundedButton(
+              //   colour: Color(0xFFE9C46A),
+              //   title: 'REGISTER',
+              //   onPressed: () {
+              //     if (name.isEmpty ||
+              //         (name == null) ||
+              //         (surname == null) ||
+              //         (schoolName == null) ||
+              //         (surname.isEmpty) ||
+              //         (schoolName.isEmpty)) {
+              //       _showMyDialog();
+              //     }
+              //     if (cellNum.isEmpty || (cellNum == null)) {
+              //       cellNum = '0000000000';
+              //     } else {
+              //       firestore.collection('users').add({
+              //         'email': widget.userGmail,
+              //         'name': name,
+              //         'surname': surname,
+              //         'schoolName': schoolName,
+              //         'province': province,
+              //         'cellNumber': cellNum,
+              //       });
+              //       Navigator.pushNamed(context, DummyScreen.id);
+              //     }// if else proceed button actions onPressed
+              //   },
+              // ),
+
+
             ],
           ),
         ),

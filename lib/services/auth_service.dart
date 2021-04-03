@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-
 //backend for the google sign in
 class AuthService {
   final _auth = FirebaseAuth.instance;
 
   //sign in with google function (using firebase)
-  Future<UserCredential> signInWithCredential(AuthCredential credential) =>
-      _auth.signInWithCredential(credential);
+  Future<UserCredential> signInWithCredential(AuthCredential credential) {
+    return _auth.signInWithCredential(credential);
+  }
 
 //sign out with google function (using firebase)
   Future<void> logout() => _auth.signOut();

@@ -1,14 +1,9 @@
-import 'dart:async';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/button_view.dart';
-import 'package:ls_app_firebase_login/screens/dummy_screen.dart';
 import 'package:ls_app_firebase_login/screens/requiredInfo_screen.dart';
-import 'package:provider/provider.dart';
 import 'login_screen.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
-import 'package:ls_app_firebase_login/auth_bloc.dart';
+
 
 class WelcomeScreen extends StatefulWidget {
   static const String id = 'welcome_screen';
@@ -19,31 +14,26 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
-  StreamSubscription<User> loginStateSubscription;
-  @override
-  void initState() {
-    var authBloc = Provider.of<AuthBloc>(context, listen: false);
-    loginStateSubscription = authBloc.currentUser.listen((fbUser) {
-      // if (fbUser != null) {
-      //   Navigator.of(context).pushReplacement(
-      //     MaterialPageRoute(
-      //       builder: (context) => DummyScreen(),
-      //     ),
-      //   );
-      // } // check if firebase user exists
-    });
-    super.initState();
-  }
 
-  @override
-  void dispose() {
-    loginStateSubscription.cancel();
-    super.dispose();
-  }
+
+  // @override
+  // void initState() {
+  //   var authBloc = Provider.of<AuthBloc>(context, listen: false);
+  //   authBloc.currentUser.listen((fbUser) {
+  //     if (fbUser != null) {
+  //       Navigator.of(context).pushReplacement(
+  //         MaterialPageRoute(
+  //           builder: (context) => DummyScreen(),
+  //         ),
+  //       );
+  //     } // check if firebase user exists
+  //   });
+  //   super.initState();
+  // }//init state to autoLogin
+
 
   @override
   Widget build(BuildContext context) {
-    final authBloc = Provider.of<AuthBloc>(context);
     return Scaffold(
       backgroundColor: Color(0xFF264653),
       body: Padding(
@@ -80,14 +70,10 @@ class _WelcomeScreenState extends State<WelcomeScreen>
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RequiredInfoScreen()),
+                  MaterialPageRoute(builder: (context) => RequiredInfoScreen(userGmail: '')),
                 );
               },
             ),
-            SignInButton(Buttons.Google,
-                elevation: 5.0, text: 'Sign out with Google', onPressed: () {
-              authBloc.logout();
-            }),
           ],
         ),
       ),
