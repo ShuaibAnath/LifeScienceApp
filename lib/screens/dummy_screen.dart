@@ -5,6 +5,7 @@ import 'package:ls_app_firebase_login/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:ls_app_firebase_login/screens/login_screen.dart';
+import 'package:ls_app_firebase_login/screens/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
 class DummyScreen extends StatefulWidget {
@@ -23,7 +24,7 @@ class _DummyScreenState extends State<DummyScreen> {
       if (fbUser == null) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (context) => LoginScreen(),
+            builder: (context) => WelcomeScreen(),
           ),
         );
       } // check if firebase user exists

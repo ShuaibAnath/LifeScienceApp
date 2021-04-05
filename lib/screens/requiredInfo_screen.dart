@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ls_app_firebase_login/constants.dart';
+import 'package:ls_app_firebase_login/constants_login.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
 import 'dart:async' show Future;
 import 'package:flutter/services.dart' show rootBundle;
@@ -290,17 +290,20 @@ class _RequiredInfoScreenState extends State<RequiredInfoScreen> {
                 colour: Color(0xFFE9C46A),
                 title: (widget.userGmail == '') ? 'PROCEED':'REGISTER',
                 onPressed: () {
+
+                  if (cellNum.isEmpty || (cellNum == null)) {
+                    cellNum = '0000000000';
+                  }// if cellNum is empty
                   if (name.isEmpty ||
                       (name == null) ||
                       (surname == null) ||
                       (schoolName == null) ||
                       (surname.isEmpty) ||
                       (schoolName.isEmpty)) {
+
                     _showMyDialog();
                   }// if Details incomplete
-                  if (cellNum.isEmpty || (cellNum == null)) {
-                    cellNum = '0000000000';
-                  }// if cellNum is empty
+
                   else {
                     if(widget.userGmail == '') {
                       Navigator.push(

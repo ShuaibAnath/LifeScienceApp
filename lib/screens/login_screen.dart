@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
-import 'package:ls_app_firebase_login/constants.dart';
+import 'package:ls_app_firebase_login/constants_login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ls_app_firebase_login/screens/dummy_screen.dart';
 import 'package:ls_app_firebase_login/screens/requiredInfo_screen.dart';
@@ -21,7 +21,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final _auth = FirebaseAuth.instance;
 
   Future<void> _showMyDialogReg(
-      {String message, String heading, TextButton textButton, String userEmail}) async {
+      {String message,
+      String heading,
+      TextButton textButtonOK,
+      TextButton textButtonREG,
+      String userEmail}) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -35,29 +39,15 @@ class _LoginScreenState extends State<LoginScreen> {
               ],
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Register'),
-              onPressed: () {
-                //TODO: need to determine which screen you want to go to(but I made it the welcome screen).
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => RequiredInfoScreen(userGmail: userEmail),
-                  ),
-                  ModalRoute.withName(RequiredInfoScreen.id),
-                ); //navigator push and remove
-              }, //onPressed
-            ),
-          textButton
-          ],
+          actions: <Widget>[textButtonREG, textButtonOK],
         );
       },
     );
   } //function to return dialog box
 
   bool showSpinner = false;
-  String email, password;
+  String email = '';
+  String password = '';
   @override
   Widget build(BuildContext context) {
     final authBloc = Provider.of<AuthBloc>(context);
@@ -119,51 +109,174 @@ class _LoginScreenState extends State<LoginScreen> {
                 title: 'Log In',
                 colour: Colors.lightBlueAccent,
                 onPressed: () async {
-                  setState(() {
-                    showSpinner = true;
-                  }); //showSpinner becomes true
-                  try {
-                    final user = await _auth.signInWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
-                    if (user != null) {
-                      // TODO: If statement for email and password validation
-                      Navigator.pushNamed(context, DummyScreen.id);
-                    } // go to chat screen if user exists
-                    setState(() {
-                      showSpinner = false;
-                    }); //showSpinner becomes false
-                  } /*try for user credentials*/
-                  catch (e) {
-                    print(e);
-                    setState(() {
-                      showSpinner = false;
-                    });
+                  if (email.isEmpty ||
+                      (email == null) ||
+                      password.isEmpty ||
+                      (password == null)) {
                     _showMyDialogReg(
-                        message:
-                            'The account you tried logging in with does not exist, please ensure the email you entered is registered',
-                        heading: 'Account Does Not exist',
-                      textButton: TextButton(
+                      message: 'Please enter both an e-mail and a password.',
+                      heading: 'Incomplete details',
+                      textButtonOK: TextButton(
                         child: Text('OK'),
                         onPressed: () => Navigator.pop(context),
                       ),
+                    );
+                  } else if (password.length < 6) {
+                    _showMyDialogReg(
+                      message: 'Please enter a password of at least 6 characters.',
+                      heading: 'Password too short',
+                      textButtonOK: TextButton(
+                        child: Text('OK'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    );
+                  } else {
+                    setState(() {
+                      showSpinner = true;
+                    });
+
+                    try {
+                      final user = await _auth.signInWithEmailAndPassword(
+                        email: email,
+                        password: password,
+                      );
+                      if (user != null) {
+                        // TODO: If statement for email and password validation
+                        Navigator.pushNamed(context, DummyScreen.id);
+                      } // go to chat screen if user exists
+                      setState(() {
+                        showSpinner = false;
+                      }); //showSpinner becomes false
+                    } /*try for user credentials*/ //TODO: handle null case
+                    on FirebaseAuthException catch (e) {
+                      print('is firebase exception');
+                      print('Failed with error code: ${e.code}');
+                      if (e.code == 'user-not-found') {
+                        setState(() {
+                          showSpinner = false;//show user that search for account if finished
+                        });
+                        _showMyDialogReg(
+                          message: 'The account you tried logging in with does not exist, please proceed register or check your credentials',
+                          heading: 'Account Does Not exist',
+                          textButtonOK: TextButton(
+                            child: Text('OK'),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                          textButtonREG: TextButton(
+                            child: Text('Register'),
+                            onPressed: () {
+                              //TODO: need to determine which screen you want to go to(but I made it the welcome screen).
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RequiredInfoScreen(
+                                      userGmail: authBloc.userGmail),
+                                ),
+                                ModalRoute.withName(RequiredInfoScreen.id),
+                              ); //navigator push and remove
+                            }, //onPressed
+                          ),
                         );
-                  } // catch firebase unauthorized access
+                      } //if user DNE
+                      else {
+                        _showMyDialogReg(
+                          message: e.message,
+                          heading: 'Log In error',
+                          textButtonOK: TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                setState(() {
+                                  showSpinner = false;
+                                }); //setState
+                              } //onPressed
+                          ),
+                        );//showDialog
+                      }
+                    } //catch
+                  } //else no nulls or empty values for email and password
                 }, //onPressed
               ),
               SignInButton(Buttons.Google, elevation: 5.0, onPressed: () {
+
+                setState(() {
+                  showSpinner = true;
+                });
                 authBloc.loginGoogle().then((data) {
-                  if (authBloc.userExistsOnFirestore) {
-                    Navigator.pushNamed(context, DummyScreen.id);
-                  } else {
+
+                  setState(() {
+                    showSpinner = false;
+                  });
+
+                  if (authBloc.userGmailPlatformErrorCode == 'network_error') {
                     _showMyDialogReg(
                       message:
-                          'The account you tried logging in with does not exist, please proceed register',
-                      heading: 'Account Does Not exist',
-                      userEmail: authBloc.userGmail,
+                          'A network error has occurred, check your connection, you might be offline',
+                      heading: 'Log In error',
+                      textButtonOK: TextButton(
+                        child: Text('OK'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
                     );
-                  }
+                    // authBloc.userGmailPlatformErrorCode ='';
+                  } //network error
+                  else if (authBloc.userGmailPlatformErrorCode.isNotEmpty) {
+                    _showMyDialogReg(
+                      message: 'Something went wrong please try again',
+                      heading: 'Log In error',
+                      textButtonOK: TextButton(
+                        child: Text('OK'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    );
+                    // authBloc.userGmailPlatformErrorCode ='';
+                  } else if (authBloc.userGmailFbErrorCode.isNotEmpty) {
+                    _showMyDialogReg(
+                      message: authBloc.userGmailFbError,
+                      heading: 'Log In error',
+                      textButtonOK: TextButton(
+                        child: Text('OK'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    );
+                    // authBloc.userGmailFbErrorCode ='';
+                  } else {
+                    if (authBloc.userExistsOnFirestore) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DummyScreen(),
+                        ),
+                        ModalRoute.withName(DummyScreen.id),
+                      );
+                    } else {
+                      _showMyDialogReg(
+                        message:
+                            'The account you tried logging in with does not exist, please proceed register',
+                        heading: 'Account Does Not exist',
+                        userEmail: authBloc.userGmail,
+                        textButtonOK: TextButton(
+                          child: Text('OK'),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                        textButtonREG: TextButton(
+                          child: Text('Register'),
+                          onPressed: () {
+
+                            //TODO: need to determine which screen you want to go to(but I made it the welcome screen).
+                            Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => RequiredInfoScreen(
+                                    userGmail: authBloc.userGmail),
+                              ),
+                              ModalRoute.withName(RequiredInfoScreen.id),
+                            ); //navigator push and remove
+                          }, //onPressed
+                        ),
+                      );
+                    } //else do not exist on firestore
+                  } //else no network error
                 });
               }),
             ],

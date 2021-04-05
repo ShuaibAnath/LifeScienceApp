@@ -36,6 +36,8 @@ dependencies:
   google_sign_in: ^5.0.1
   provider: ^5.0.0
   flutter_signin_button: ^1.1.0
+  native_pdf_view: any
+  sqflite: ^2.0.0+3
 
 dev_dependencies:
   flutter_test:
@@ -54,8 +56,14 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-  - school/
-  - images/
+    - school/
+    - images/
+    - assets/theory/
+    - assets/diagrams/
+    - assets/PracticeQuizDiagrams/
+    - assets/localData/
+    - assets/UI/
+    - assets/pastQ&A/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

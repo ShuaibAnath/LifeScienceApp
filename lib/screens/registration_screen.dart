@@ -1,7 +1,7 @@
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:ls_app_firebase_login/auth_bloc.dart';
 import 'package:ls_app_firebase_login/compontents/rounded_button.dart';
-import 'package:ls_app_firebase_login/constants.dart';
+import 'package:ls_app_firebase_login/constants_login.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:provider/provider.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dummy_screen.dart';
 
 FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -158,37 +158,73 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     setState(() {
                       showSpinner = false;
                     }); // spinner stops
-                  } catch (signUpError) {
-                    if (signUpError.code == 'email-already-in-use') {
-                      _showMyDialogReg(
-                          '$email has already been registered.', 'Email Taken');
-                      setState(() {
-                        showSpinner = false;
-                      });
-                    } //if signUpError is email-already-in-use
-                  } //caught signUp
-                  // catch (e) {
-                  //   _showMyDialogReg( 'Unable to Register.Please try again later or check your internet connection.');
-                  //
-                  //   print(e);
-                  // } //try-catch
+                  } on FirebaseAuthException catch (e) {
+                    print('is firebase exception');
+                    print('Failed with error code: ${e.code}');
+
+                    _showMyDialogReg(e.message, 'Registration error');
+                    setState(() {
+                      showSpinner = false;
+                    });
+                  } //catch
                 } //else
               }, //onPressed
             ),
             SignInButton(Buttons.Google, onPressed: () {
-
+              setState(() {
+                showSpinner = true;
+              });
               authBloc.registerWithGoogle().then(
                 (data) {
-                  firestore.collection('users').add({
-                    'email': authBloc.userRegGmail,
-                    'name': widget.name,
-                    'surname': widget.surname,
-                    'schoolName': widget.schoolName,
-                    'province': widget.province,
-                    'cellNumber': widget.cellNum
-                  }).then((value) => Navigator.pushNamed(context, DummyScreen.id),);
+                  setState(() {
+                    showSpinner = false;
+                  });
+                  if (authBloc.userRegGmailPlatformErrorCode ==
+                      'network_error') {
+                    _showMyDialogReg(
+                      'A network error has occurred, check your connection, you might be offline',
+                      'Log In error',
+                    );
+                    // authBloc.userRegGmailPlatformErrorCode = '';
+                  } //network error
+                  else if (authBloc.userRegGmailPlatformErrorCode.isNotEmpty) {
+                    _showMyDialogReg(
+                      'Something went wrong please try again',
+                      'Log In error',
+                    );
+                    // authBloc.userRegGmailPlatformErrorCode = '';
+                  } else if (authBloc.userRegGmailFbErrorCode.isNotEmpty) {
+                    _showMyDialogReg(
+                      authBloc.userRegGmailFbError,
+                      'Log In error',
+                    );
+                    // authBloc.userRegGmailPlatformErrorCode = '';
+                  } else {
+                    firestore.collection('users').add({
+                      'email': authBloc.userRegGmail,
+                      'name': widget.name,
+                      'surname': widget.surname,
+                      'schoolName': widget.schoolName,
+                      'province': widget.province,
+                      'cellNumber': widget.cellNum
+
+                    }).then(
+                      (value) async{
+                        final prefs = await SharedPreferences.getInstance();
+
+                        prefs.setBool('userExists', true);
+
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DummyScreen(),
+                          ),
+                          ModalRoute.withName(DummyScreen.id),
+                        );
+                      });
+                  }
                 },
-              );//then
+              ); //then
             })
           ],
         ),
